@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W3F — Phase 2 Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0A0A;
+  --text: #FFFFFF;
+  --muted: #555;
+  --accent: #00D2BE;
+  --dim: rgba(0,210,190,0.12);
+  --border: #1A1A1A;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Nav ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 30px;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+nav .logo-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+nav .logo {
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 6px;
+  color: var(--accent);
+}
+nav .tagline {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+nav .links { display: flex; gap: 24px; }
+nav .links a {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+}
+nav .links a:hover { opacity: 1; }
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 110;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  transition: all 0.3s;
+}
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+}
+.hero img {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center right;
+  filter: grayscale(100%) contrast(1.2) brightness(0.45);
+}
+.hero-fallback {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, #0A0A0A 0%, #111 50%, #0A0A0A 100%);
+  z-index: 0;
+}
+.hero img { z-index: 1; }
+.hero-grid {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  background-image:
+    linear-gradient(rgba(0,210,190,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,210,190,0.08) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+.hero-gradient {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 40%;
+  background: linear-gradient(to top, var(--bg), transparent);
+  z-index: 3;
+}
+.hero-content {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+}
+.hero-content .status {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.hero-content h1 {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(56px, 12vw, 160px);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -3px;
+  text-transform: uppercase;
+}
+.hero-content h1 span { color: var(--accent); }
+.hero-telemetry {
+  display: flex;
+  gap: 50px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.telemetry-item .label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.telemetry-item .value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.hero-scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 30px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: pulse-down 2s infinite;
+}
+.hero-scroll svg { width: 16px; height: 16px; stroke: var(--muted); }
+@keyframes pulse-down {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+/* ── Section Base ── */
+section {
+  padding: 80px 30px;
+  border-top: 1px solid var(--border);
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 50px;
+}
+.section-header h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.section-header .meta {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 2px;
+}
+
+/* ── Schedule ── */
+#schedule { padding-top: 100px; }
+.week-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  padding: 14px 0 10px;
+  border-bottom: 1px solid var(--border);
+  margin-top: 20px;
+}
+.race-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 80px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #111;
+  align-items: center;
+  transition: background 0.15s;
+}
+.race-row:hover { background: var(--dim); }
+.race-row .date { font-size: 12px; letter-spacing: 1px; }
+.race-row .session { font-size: 12px; letter-spacing: 1px; }
+.race-row .count { font-size: 12px; color: var(--accent); text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.race-row.race-day {
+  background: var(--dim);
+  padding: 16px;
+  border-left: 3px solid var(--accent);
+}
+.race-row.race-day .session { font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: 3px; }
+.race-row.makeup { opacity: 0.35; }
+.race-row.makeup .session { font-style: italic; }
+
+/* ── Budget ── */
+.budget-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.budget-card {
+  background: var(--bg);
+  padding: 28px 30px;
+  transition: transform 0.2s;
+}
+.budget-card:hover { transform: translateY(-2px); }
+.budget-card h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.budget-card .sublabel {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.budget-card .total {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+.budget-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #111;
+  font-size: 12px;
+}
+.budget-item:last-child { border-bottom: none; }
+.budget-item .name { opacity: 0.7; }
+.budget-item .price { color: var(--accent); font-weight: 500; font-variant-numeric: tabular-nums; }
+.budget-item.sponsorship { opacity: 0.5; }
+.budget-item.sponsorship .price { color: var(--muted); }
+
+.budget-summary {
+  margin-top: 40px;
+  padding: 30px;
+  border-top: 1px solid var(--accent);
+  background: rgba(0,210,190,0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.budget-summary .label {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.budget-summary .amount {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Payment ── */
+#payment { text-align: center; }
+#payment .section-header { justify-content: center; flex-direction: column; align-items: center; }
+.payment-card {
+  max-width: 500px;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  padding: 40px;
+  transition: transform 0.2s;
+}
+.payment-card:hover { transform: translateY(-2px); }
+.payment-card .bank-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  margin-bottom: 30px;
+}
+.payment-detail {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid #111;
+  font-size: 12px;
+}
+.payment-detail .lbl { color: var(--muted); letter-spacing: 1px; text-transform: uppercase; font-size: 10px; }
+.payment-detail .val { font-weight: 700; }
+.payment-detail .val.highlight { color: var(--accent); font-size: 16px; font-variant-numeric: tabular-nums; }
+.payment-note {
+  margin-top: 30px;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  line-height: 1.6;
+}
+
+/* ── Footer ── */
+footer {
+  padding: 30px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  nav { padding: 12px 16px; }
+  nav .links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: rgba(10,10,10,0.98);
+    padding: 20px 16px;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  nav .links.open { display: flex; }
+  nav .links a { font-size: 11px; letter-spacing: 2px; opacity: 0.7; }
+  .hamburger { display: flex; }
+  nav .tagline { display: none; }
+  .hero { padding: 0 16px; min-height: 70vh; }
+  .hero-grid { background-size: 40px 40px; }
+  .hero-content { max-width: 100%; }
+  .hero-telemetry { gap: 24px; flex-wrap: wrap; }
+  .telemetry-item .value { font-size: 20px; }
+  .hero-scroll { left: 16px; bottom: 20px; }
+  section { padding: 50px 16px; }
+  .section-header h2 { font-size: 22px; }
+  .race-row { grid-template-columns: 70px 1fr 40px; padding: 10px 8px; letter-spacing: 0; }
+  .race-row .date { font-size: 11px; letter-spacing: 0; }
+  .race-row .session { font-size: 11px; letter-spacing: 0; }
+  .race-row .count { font-size: 11px; }
+  .race-row.race-day { padding: 12px 8px; }
+  .race-row.race-day .session { font-size: 12px; letter-spacing: 2px; }
+  .budget-grid { grid-template-columns: 1fr; }
+  .budget-summary { flex-direction: column; gap: 12px; text-align: center; }
+  .budget-summary .amount { font-size: 24px; }
+  .payment-card { padding: 24px; }
+  footer { flex-direction: column; gap: 8px; text-align: center; line-height: 1.8; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="logo-wrap">
+    <div class="logo">W3F</div>
+    <div class="tagline">Win First or Fail Fast</div>
+  </div>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="links" id="nav-links">
+    <a href="#schedule">Schedule</a>
+    <a href="#budget">Budget</a>
+    <a href="#payment">Payment</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-fallback"></div>
+  <img src="https://images.pexels.com/photos/14079603/pexels-photo-14079603.jpeg?auto=compress&cs=tinysrgb&w=1600&h=900&dpr=1" alt="F1 Racing Car" crossorigin="anonymous">
+  <div class="hero-grid"></div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <div class="status">PHASE 2 // WRO 2026 // STATUS: ACTIVE</div>
+    <h1>Win First<br>or <span>Fail Fast</span></h1>
+    <div class="hero-telemetry">
+      <div class="telemetry-item">
+        <div class="label">Sessions</div>
+        <div class="value">21</div>
+      </div>
+      <div class="telemetry-item">
+        <div class="label">Timeline</div>
+        <div class="value">Jun–Jul</div>
+      </div>
+      <div class="telemetry-item">
+        <div class="label">Race Day</div>
+        <div class="value">18/07</div>
+      </div>
+      <div class="telemetry-item">
+        <div class="label">Investment</div>
+        <div class="value">27.5M</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+    SCROLL
+  </div>
+</section>
+
+<!-- Schedule -->
+<section id="schedule">
+  <div class="section-header">
+    <h2>Race Calendar</h2>
+    <div class="meta">18 DATES · 21 SESSIONS</div>
+  </div>
+
+  <div class="week-label">JUN — MAKE-UP</div>
+  <div class="race-row makeup">
+    <div class="date">06/06 T7</div>
+    <div class="session">Học bù</div>
+    <div class="count">1</div>
+  </div>
+  <div class="race-row makeup">
+    <div class="date">07/06 CN</div>
+    <div class="session">Học bù</div>
+    <div class="count">1</div>
+  </div>
+  <div class="race-row makeup">
+    <div class="date">13/06 T7</div>
+    <div class="session">Học bù</div>
+    <div class="count">1</div>
+  </div>
+
+  <div class="week-label">JUN — SPRINT PHASE</div>
+  <div class="race-row">
+    <div class="date">14/06 CN</div>
+    <div class="session">Sprint #01</div>
+    <div class="count">1</div>
+  </div>
+  <div class="race-row">
+    <div class="date">20/06 T7</div>
+    <div class="session">Sprint #02</div>
+    <div class="count">1</div>
+  </div>
+  <div class="race-row">
+    <div class="date">21/06 CN</div>
+    <div class="session">Sprint #03</div>
+    <div class="count">1</div>
+  </div>
+  <div class="race-row">
+    <div class="date">27/06 T7</div>
+    <div class="session">Sprint #04</div>
+    <div class="count">1</div>
+  </div>
+  <div class="race-row">
+    <div class="date">28/06 CN</div>
+    <div class="session">Sprint #05</div>
+    <div class="count">1</div>
+  </div>
+
+  <div class="week-label">JUL — INTENSIVE</div>
+  <div class="race-row">
+    <div class="date">04/07 T7</div>
+    <div class="session">Sprint #06</div>
+    <div class="count">1.5</div>
+  </div>
+  <div class="race-row">
+    <div class="date">05/07 CN</div>
+    <div class="session">Sprint #07</div>
+    <div class="count">1.5</div>
+  </div>
+  <div class="race-row">
+    <div class="date">11/07 T7</div>
+    <div class="session">Sprint #08</div>
+    <div class="count">1.5</div>
+  </div>
+  <div class="race-row">
+    <div class="date">12/07 CN</div>
+    <div class="session">Sprint #09</div>
+    <div class="count">1.5</div>
+  </div>
+  <div class="race-row">
+    <div class="date">13/07 T2</div>
+    <div class="session">Sprint #10</div>
+    <div class="count">1</div>
+  </div>
+  <div class="race-row">
+    <div class="date">14/07 T3</div>
+    <div class="session">Sprint #11</div>
+    <div class="count">1</div>
+  </div>
+  <div class="race-row">
+    <div class="date">16/07 T5</div>
+    <div class="session">Sprint #12</div>
+    <div class="count">1</div>
+  </div>
+  <div class="race-row">
+    <div class="date">17/07 T6</div>
+    <div class="session">Sprint #13</div>
+    <div class="count">1</div>
+  </div>
+
+  <div class="week-label">RACE WEEK</div>
+  <div class="race-row race-day">
+    <div class="date">18/07 T7</div>
+    <div class="session">RACE DAY</div>
+    <div class="count">3</div>
+  </div>
+  <div class="race-row race-day">
+    <div class="date">19/07 CN</div>
+    <div class="session">RACE DAY</div>
+    <div class="count">3</div>
+  </div>
+</section>
+
+<!-- Budget -->
+<section id="budget">
+  <div class="section-header">
+    <h2>Budget Spec</h2>
+    <div class="meta">PER STUDENT</div>
+  </div>
+
+  <div class="budget-grid">
+    <div class="budget-card">
+      <h3>Hardware Assets</h3>
+      <div class="sublabel">Family owns 100% — post-competition</div>
+      <div class="total">14.072.100 VND</div>
+      <div class="budget-item">
+        <span class="name">Spike Prime Expansion Kit</span>
+        <span class="price">2.615.433</span>
+      </div>
+      <div class="budget-item">
+        <span class="name">Competition Table</span>
+        <span class="price">1.600.000</span>
+      </div>
+      <div class="budget-item">
+        <span class="name">Competition Mat</span>
+        <span class="price">666.667</span>
+      </div>
+      <div class="budget-item">
+        <span class="name">Mission Object Bricks</span>
+        <span class="price">986.667</span>
+      </div>
+      <div class="budget-item">
+        <span class="name">Coding Platform License</span>
+        <span class="price">4.120.000</span>
+      </div>
+      <div class="budget-item">
+        <span class="name">AI Engine — Claude</span>
+        <span class="price">2.583.333</span>
+      </div>
+    </div>
+
+    <div class="budget-card">
+      <h3>Training &amp; Technology</h3>
+      <div class="sublabel">2-month complete pack</div>
+      <div class="total">13.500.000 VND</div>
+      <div class="budget-item">
+        <span class="name">Coach Fee (21 sessions)</span>
+        <span class="price">10.500.000</span>
+      </div>
+      <div class="budget-item">
+        <span class="name">WRO Registration</span>
+        <span class="price">1.500.000</span>
+      </div>
+      <div class="budget-item">
+        <span class="name">Curriculum Design</span>
+        <span class="price">3.000.000</span>
+      </div>
+      <div class="budget-item sponsorship">
+        <span class="name">LESS: Sponsorship Offset</span>
+        <span class="price">(1.500.000)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="budget-summary">
+    <div class="label">Total Investment per Student</div>
+    <div class="amount">27.572.100 VND</div>
+  </div>
+</section>
+
+<!-- Payment -->
+<section id="payment">
+  <div class="section-header">
+    <h2>Payment</h2>
+    <div class="meta">BANK TRANSFER</div>
+  </div>
+
+  <div class="payment-card">
+    <div class="bank-name">VIETCOMBANK</div>
+    <div class="payment-detail">
+      <span class="lbl">Account No</span>
+      <span class="val highlight">1026973706</span>
+    </div>
+    <div class="payment-detail">
+      <span class="lbl">Account Name</span>
+      <span class="val">HO GIA CUONG</span>
+    </div>
+    <div class="payment-detail">
+      <span class="lbl">Amount</span>
+      <span class="val highlight">27.572.100 VND</span>
+    </div>
+    <div class="payment-detail">
+      <span class="lbl">Content</span>
+      <span class="val" style="font-size:11px;">W3F-[StudentName]-Phase2</span>
+    </div>
+    <div class="payment-note">
+      Send transfer receipt to confirm enrollment.<br>
+      Hardware ordered upon payment verification.
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <span>W3F — WIN FIRST OR FAIL FAST</span>
+  <span>WRO 2026 PHASE 2</span>
+  <span>giacuong3231-png.github.io/w3f-proposal-2026</span>
+</footer>
+
+<script>
+function toggleMenu() {
+  document.getElementById('nav-links').classList.toggle('open');
+  document.querySelector('.hamburger').classList.toggle('active');
+}
+// Close menu on link click
+document.querySelectorAll('#nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.getElementById('nav-links').classList.remove('open');
+    document.querySelector('.hamburger').classList.remove('active');
+  });
+});
+</script>
+
+</body>
+</html>
